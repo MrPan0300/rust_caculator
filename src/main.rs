@@ -19,6 +19,7 @@ enum Operator {
     Divide,
 }
 
+#[derive(Debug)]
 struct ToKen {
     numbar: f64,
     operator: Operator
@@ -27,23 +28,67 @@ struct ToKen {
 
 fn sort_string(value: String) {
     let char_vector:Vec<char> = value.chars().collect();
-    dbg!(char_vector);
     let mut ToKens:Vec<ToKen> = Vec::new();
-    let mut TokenStruct:ToKen;
-    let mut operator:Operator;
+    let mut operators:Operator = Operator::Add;
     let mut num:String = String::new();
     for (i, value) in char_vector.iter().enumerate() {
         if i == 0 {
-            if value == '-' {
-                operator = Operator::Subtract;
-            }else {
-                operator = Operator::Add;
+            if value == &'-' {
+                operators = Operator::Subtract;
             }
         }
         match value {
-            value: 'v' => 
+            '+' => {
+                let token = ToKen{
+                    numbar: num.parse().expect("error string to float"),
+                    operator: operators,
+                };
+                ToKens.push(token);
+                num = String::new();
+                operators = Operator::Add;        
+            },
+            '-' => {
+                if i != 0 {
+                let token = ToKen{
+                        numbar: num.parse().expect("error string to float"),
+                        operator: operators,
+                    };
+                ToKens.push(token);
+                num = String::new();
+                operators = Operator::Subtract;
+                }
+            },
+            '*' => {
+                let token = ToKen{
+                    numbar: num.parse().expect("error string to float"),
+                    operator: operators,
+                };
+                ToKens.push(token);
+                num = String::new();
+                operators = Operator::Multiply;
+            },
+            '/' => {
+                let token = ToKen{
+                    numbar: num.parse().expect("error string to float"),
+                    operator: operators,
+                };
+                ToKens.push(token);
+                num = String::new();
+                operators = Operator::Divide;
+            }
+            _ => num.push_str(&value.to_string()),
         }
-    
+        
+        if i == char_vector.len() - 1 {
+            println!("here");
+            println!("{num}");
+            let token = ToKen {
+                numbar: num.parse().expect("error string to float"),
+                operator: operators,
+            };
+            ToKens.push(token);
+        }
+        println!("{i}");
     }
+    dbg!(ToKens);
 }
-
